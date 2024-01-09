@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "监控开始"
-dir_path="/data/hypertext/kangheng/howto100m/download/videos/Howto-Interlink7M_subset_w_sampled_clips_train"  # 需要你指明监控的目录
+dir_path="/data/hypertext/kangheng/howto100m/download/videos/Howto-Interlink7M_subset_w_sampled_clips_val"  # 需要你指明监控的目录
 prev_count=$(ls -l $dir_path | wc -l)  # 初始化文件数量
 
 while true; do
