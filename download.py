@@ -93,11 +93,11 @@ def parse_args():
 
     # Data path
     parser.add_argument(
-        "--video_list_file", default="data/Howto-Interlink7M_subset_w_sampled_clips_val.txt",type=str, help="path to howto100m_videos.txt"
+        "--video_list_file", default="data/Howto-Interlink7M_subset_w_sampled_clips_train.txt",type=str, help="path to howto100m_videos.txt"
     )
     parser.add_argument(
         "--save_dir",
-        default="videos/Howto-Interlink7M_subset_w_sampled_clips_val",
+        default="videos/Howto-Interlink7M_subset_w_sampled_clips_train",
         type=str,
         help="The directory to save video files.",
     )
