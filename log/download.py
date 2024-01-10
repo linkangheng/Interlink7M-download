@@ -71,7 +71,7 @@ class Saver(object):
 
 class RequestThread(threading.Thread):
     def __init__(
-        self, saver, tasklist, user_name, password, interval=0.01, *args, **kwargs
+        self, saver, tasklist, user_name, password, interval=0.1, *args, **kwargs
     ):
         self.saver = saver
         self.tasklist = tasklist
@@ -83,8 +83,6 @@ class RequestThread(threading.Thread):
     def run(self):
         for video_url in self.tasklist:
             video_name = video_url.split("/")[-1]
-            # if self.saver.query_exist(video_name):
-            #     continue
             retries=0
             max_retries = 20
             while retries<max_retries:
@@ -92,7 +90,7 @@ class RequestThread(threading.Thread):
                     ret = self.request(video_url)
                     self.saver.dump((video_name, ret))
                     # 写入文件
-                    with open("/data/hypertext/kangheng/howto100m/download/log/Howto-Interlink7M_subset_w_sampled_clips_val/download_success.txt","a") as f:
+                    with open("/data/hypertext/kangheng/howto100m/download/log/Howto-Interlink7M_subset_w_sampled_clips_train/download_success.txt","a") as f:
                         f.write(video_name+"\n")
                     break
                 except:
@@ -100,7 +98,7 @@ class RequestThread(threading.Thread):
                     time.sleep(self.interval)
                     continue
             if retries==max_retries:
-                with open("/data/hypertext/kangheng/howto100m/download/log/Howto-Interlink7M_subset_w_sampled_clips_val/download_failed.txt","a") as f:
+                with open("/data/hypertext/kangheng/howto100m/download/log/Howto-Interlink7M_subset_w_sampled_clips_train/download_failed.txt","a") as f:
                     f.write(video_name+"\n")
                 continue
             
@@ -115,16 +113,16 @@ def parse_args():
 
     # Data path
     parser.add_argument(
-        "--video_list_file", default="/data/hypertext/kangheng/howto100m/download/log/Howto-Interlink7M_subset_w_sampled_clips_val/download_list.txt",type=str, help="path to howto100m_videos.txt"
+        "--video_list_file", default="/data/hypertext/kangheng/howto100m/download/log/Howto-Interlink7M_subset_w_sampled_clips_train/download_list.txt",type=str, help="path to howto100m_videos.txt"
     )
     parser.add_argument(
         "--save_dir",
-        default="/data/hypertext/kangheng/howto100m/download/videos/Howto-Interlink7M_subset_w_sampled_clips_val",
+        default="/data/hypertext/kangheng/howto100m/download/videos/Howto-Interlink7M_subset_w_sampled_clips_train",
         type=str,
         help="The directory to save video files.",
     )
     parser.add_argument(
-        "--num_threads", default=128, type=int, help="The number of threads to download"
+        "--num_threads", default=200, type=int, help="The number of threads to download"
     )
 
     # Auth info
@@ -142,7 +140,6 @@ def main():
     tasks = TaskManager(
         args.video_list_file, num_threads=args.num_threads
     ).create_split_tasks()
-
     threads = [
         RequestThread(saver, subtask, args.user_name, args.password)
         for subtask in tasks
