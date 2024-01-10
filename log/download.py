@@ -6,6 +6,7 @@ import codecs
 import time
 import argparse
 from moviepy.editor import VideoFileClip
+from tqdm import tqdm
 
 
 
@@ -80,17 +81,19 @@ class RequestThread(threading.Thread):
         super(RequestThread, self).__init__(*args, **kwargs)
 
     def run(self):
-        # 显示进度
         for video_url in self.tasklist:
             video_name = video_url.split("/")[-1]
             # if self.saver.query_exist(video_name):
             #     continue
             retries=0
-            max_retries = 5
+            max_retries = 20
             while retries<max_retries:
                 try:
                     ret = self.request(video_url)
                     self.saver.dump((video_name, ret))
+                    # 写入文件
+                    with open("/data/hypertext/kangheng/howto100m/download/log/Howto-Interlink7M_subset_w_sampled_clips_val/download_success.txt","a") as f:
+                        f.write(video_name+"\n")
                     break
                 except:
                     retries+=1

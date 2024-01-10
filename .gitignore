@@ -2,3 +2,5 @@ videos/*
 log/*
 !log/*.py
 !log/*.ipynb
+error_log.txt
+log/Howto-Interlink7M_subset_w_sampled_clips_val/error_log.txt
