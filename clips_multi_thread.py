@@ -6,10 +6,13 @@ from concurrent.futures import ThreadPoolExecutor
 import threading
 
 # 视频文件目录前缀、输入TSV文件路径、错误日志文件路径和进度日志文件路径定义
-video_prefix = "/data/hypertext/kangheng/howto100m/download/videos/Howto-Interlink7M_subset_w_all_clips_train/"
-tsv_input = "/data/hypertext/kangheng/howto100m/Interlink7M_tsv/Howto-Interlink7M_subset_w_all_clips_train.tsv"
-error_log_path = "error_log.txt"
-progress_log_path = "progress_log.txt"
+base="Howto-Interlink7M_subset_w_all_clips_val"
+video_prefix = "/data/hypertext/kangheng/howto100m/download/videos/"+base
+tsv_input = "/data/hypertext/kangheng/howto100m/Interlink7M_tsv/"+base+".tsv"
+error_log_path = "log/"+base+"/error_log.txt"
+error_list_path = "log/"+base+"/error_list.txt"
+progress_log_path = "log/"+base+"/progress_log.txt"
+max_workers = 32
 
 # 时间字符串转换为秒的函数和错误日志记录函数
 def time_str_to_seconds(time_str):
@@ -23,6 +26,10 @@ def log_error(message):
 def log_progress(message):
     with open(progress_log_path, 'a') as progress_file:
         progress_file.write(message + '\n')
+        
+def list_error(message):
+    with open(error_list_path, 'a') as error_file:
+        error_file.write(message + '\n')
 
 # 用于记录处理进度的全局变量
 progress_count = 0
@@ -68,6 +75,7 @@ def process_video(line):
     except Exception as e:
         error_message = f"Error processing file {video_file}: {e}"
         log_error(error_message)
+        list_error(video_file)
 
 # 读取TSV文件并计算总视频数量
 with open(tsv_input, 'r') as file:
@@ -75,7 +83,7 @@ with open(tsv_input, 'r') as file:
     total_videos_count = sum(1 for line in lines if not line.startswith('video'))
 
 # 使用线程池处理视频
-with ThreadPoolExecutor(max_workers=8) as executor:
+with ThreadPoolExecutor(max_workers) as executor:
     futures = [executor.submit(process_video, line) for line in lines if not line.startswith('video')]
     for future in concurrent.futures.as_completed(futures):
         future.result()  # 使用result()来确保异常被捕获
