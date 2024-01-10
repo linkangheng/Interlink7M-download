@@ -1,5 +1,4 @@
-videos
-log
-log/Howto-Interlink7M_subset_w_all_clips_val/error_list.txt
-log/Howto-Interlink7M_subset_w_all_clips_val/error_log.txt
-log/Howto-Interlink7M_subset_w_all_clips_val/progress_log.txt
+videos/*
+log/*
+!log/*.py
+!log/*.ipynb
